@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { extractEmployees } from '../services/api';
 
 export default function GeneratePayroll() {
   const [employees, setEmployees] = useState([]);
@@ -12,8 +12,7 @@ export default function GeneratePayroll() {
   useEffect(() => {
     api.get('/employees').then(({ data }) => {
       if (data.success) {
-        const employees = Array.isArray(data.data) ? data.data : data.data?.employees || [];
-        setEmployees(employees.filter((e) => e.isActive));
+        setEmployees(extractEmployees(data).filter((e) => e.isActive !== false));
       }
     });
   }, []);

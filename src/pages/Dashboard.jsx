@@ -1,27 +1,31 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
+import api, { extractEmployees } from '../services/api';
 
 export default function Dashboard() {
   const [employees, setEmployees] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, departments: 0, totalSalary: 0 });
+  const [error, setError] = useState('');
 
   useEffect(() => {
     api.get('/employees').then(({ data }) => {
       if (data.success) {
-        const emps = Array.isArray(data.data) ? data.data : data.data?.employees || [];
+        const emps = extractEmployees(data);
         setEmployees(emps);
-        const active = emps.filter((e) => e.isActive);
+        const active = emps.filter((e) => e.isActive !== false);
         const depts = new Set(active.map((e) => e.department));
         setStats({
           total: emps.length,
           active: active.length,
           departments: depts.size,
-          totalSalary: active.reduce((sum, e) => sum + e.baseSalary, 0),
+          totalSalary: active.reduce((sum, e) => sum + (Number(e.baseSalary) || 0), 0),
         });
+      } else {
+        setError(data.message || 'Unable to load employees');
       }
     }).catch((error) => {
       console.error("Error fetching employees:", error);
-      });
+      setError(error.response?.data?.message || 'Unable to load employees');
+    });
   }, []);
 
   const fmt = (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(n);
@@ -29,6 +33,7 @@ export default function Dashboard() {
   return (
     <>
       <h1>Dashboard</h1>
+      {error && <div className="alert alert-error">{error}</div>}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="label">Total Employees</div>

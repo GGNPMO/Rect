@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { extractEmployees } from '../services/api';
 import { useAuth } from '../context/AuthContext.js';
 
 export default function Employees() {
@@ -14,7 +14,7 @@ export default function Employees() {
   const load = () => {
     api.get('/employees').then(({ data }) => {
       if (data.success) {
-        setEmployees(Array.isArray(data.data) ? data.data : data.data?.employees || []);
+        setEmployees(extractEmployees(data));
       }
     });
   };
@@ -27,7 +27,7 @@ export default function Employees() {
     if (term.length >= 2) {
       api.get(`/employees/search?term=${encodeURIComponent(term)}`).then(({ data }) => {
         if (data.success) {
-          setEmployees(Array.isArray(data.data) ? data.data : data.data?.employees || []);
+          setEmployees(extractEmployees(data));
         }
       });
     } else if (term === '') load();
