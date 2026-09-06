@@ -11,7 +11,10 @@ export default function GeneratePayroll() {
 
   useEffect(() => {
     api.get('/employees').then(({ data }) => {
-      if (data.success) setEmployees(data.data.filter((e) => e.isActive));
+      if (data.success) {
+        const employees = Array.isArray(data.data) ? data.data : data.data?.employees || [];
+        setEmployees(employees.filter((e) => e.isActive));
+      }
     });
   }, []);
 

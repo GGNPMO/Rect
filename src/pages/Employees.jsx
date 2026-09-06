@@ -13,7 +13,9 @@ export default function Employees() {
 
   const load = () => {
     api.get('/employees').then(({ data }) => {
-      if (data.success) setEmployees(data.data);
+      if (data.success) {
+        setEmployees(Array.isArray(data.data) ? data.data : data.data?.employees || []);
+      }
     });
   };
 
@@ -24,7 +26,9 @@ export default function Employees() {
     setSearch(term);
     if (term.length >= 2) {
       api.get(`/employees/search?term=${encodeURIComponent(term)}`).then(({ data }) => {
-        if (data.success) setEmployees(data.data);
+        if (data.success) {
+          setEmployees(Array.isArray(data.data) ? data.data : data.data?.employees || []);
+        }
       });
     } else if (term === '') load();
   };

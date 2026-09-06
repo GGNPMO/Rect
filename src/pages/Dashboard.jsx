@@ -8,7 +8,7 @@ export default function Dashboard() {
   useEffect(() => {
     api.get('/employees').then(({ data }) => {
       if (data.success) {
-        const emps = data.data;
+        const emps = Array.isArray(data.data) ? data.data : data.data?.employees || [];
         setEmployees(emps);
         const active = emps.filter((e) => e.isActive);
         const depts = new Set(active.map((e) => e.department));
