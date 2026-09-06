@@ -19,7 +19,9 @@ export default function Dashboard() {
           totalSalary: active.reduce((sum, e) => sum + e.baseSalary, 0),
         });
       }
-    }).catch(() => {});
+    }).catch((error) => {
+      console.error("Error fetching employees:", error);
+      });
   }, []);
 
   const fmt = (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(n);
