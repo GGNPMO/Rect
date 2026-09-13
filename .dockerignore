@@ -1,0 +1,11 @@
+node_modules
+_dist
+dist
+.git
+.github
+.vscode
+.env*
+npm-debug.log*
+Dockerfile
+README.md
+k8s
