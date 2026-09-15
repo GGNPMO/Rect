@@ -4,10 +4,10 @@ Vite + React frontend for the employee payroll system. The production container 
 
 ## API configuration
 
-The frontend uses `/api` by default. Set `VITE_API_URL` when building the image to point at a different API origin or path:
+The frontend uses `http://localhost:3000/api` by default. The Rect application runs on port `8080`, while the API runs on port `3000`:
 
 ```powershell
-docker build --build-arg VITE_API_URL=https://api.example.com/api -t payroll-ui:latest .
+docker build -t payroll-ui:latest .
 ```
 
 `VITE_API_URL` is a public frontend setting and is embedded in the JavaScript bundle. Do not put tokens, passwords, or other secrets in it. The API must allow requests from the frontend origin when using a different origin.
@@ -19,11 +19,13 @@ npm install
 npm run dev
 ```
 
+Open `http://localhost:8080` when running the frontend locally.
+
 Build and serve the production image locally:
 
 ```powershell
-docker build --build-arg VITE_API_URL=/api -t payroll-ui:latest .
-docker run --rm -p 8080:80 payroll-ui:latest
+docker build -t payroll-ui:latest .
+docker run --rm -p 8080:8080 payroll-ui:latest
 ```
 
 Open `http://localhost:8080`. The Nginx health endpoint is `http://localhost:8080/healthz`.
@@ -36,11 +38,11 @@ The manifests use one replica, small CPU/memory limits, an internal `ClusterIP` 
 
 ```powershell
 minikube start
-docker build --build-arg VITE_API_URL=/api -t payroll-ui:latest .
+docker build -t payroll-ui:latest .
 minikube image load payroll-ui:latest
 kubectl apply -k k8s
 kubectl rollout status deployment/payroll-ui
-kubectl port-forward service/payroll-ui 8080:80
+kubectl port-forward service/payroll-ui 8080:8080
 ```
 
 Open `http://localhost:8080` while the port-forward is running.
@@ -49,11 +51,11 @@ Open `http://localhost:8080` while the port-forward is running.
 
 ```powershell
 kind create cluster --name payroll
-docker build --build-arg VITE_API_URL=/api -t payroll-ui:latest .
+docker build -t payroll-ui:latest .
 kind load docker-image payroll-ui:latest --name payroll
 kubectl apply -k k8s
 kubectl rollout status deployment/payroll-ui
-kubectl port-forward service/payroll-ui 8080:80
+kubectl port-forward service/payroll-ui 8080:8080
 ```
 
 ### Azure AKS
@@ -81,7 +83,7 @@ az aks update --resource-group <resource-group> --name <aks-cluster> --attach-ac
 The service remains internal. For a low-cost private/admin check, use:
 
 ```powershell
-kubectl port-forward service/payroll-ui 8080:80
+kubectl port-forward service/payroll-ui 8080:8080
 ```
 
 Add an ingress or public load balancer only when external access is required and the associated Azure cost is acceptable.
@@ -91,7 +93,7 @@ Add an ingress or public load balancer only when external access is required and
 For a local cluster, rebuild and load the image, then redeploy:
 
 ```powershell
-docker build --build-arg VITE_API_URL=/api -t payroll-ui:latest .
+docker build -t payroll-ui:latest .
 minikube image load payroll-ui:latest  # Minikube only
 # kind load docker-image payroll-ui:latest --name payroll  # Kind only
 kubectl apply -k k8s

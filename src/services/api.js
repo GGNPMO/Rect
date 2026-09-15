@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+const apiBaseUrl = (
+  import.meta.env.DEV
+    ? '/api'
+    : (import.meta.env.VITE_API_URL || 'http://localhost:3000/api')
+).replace(/\/$/, '');
 
 const api = axios.create({
   baseURL: apiBaseUrl,
@@ -14,6 +18,7 @@ const setAuthorization = (config, token) => {
   }
   return config;
 };
+
 
 api.interceptors.request.use((config) => {
   return setAuthorization(config, localStorage.getItem('token'));
