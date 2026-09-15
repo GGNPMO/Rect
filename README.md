@@ -10,7 +10,7 @@ The frontend uses the same-origin `/api` path by default. Nginx proxies it to th
 docker build --no-cache -t payroll-ui:latest .
 ```
 
-`VITE_API_URL` is a public frontend setting and is embedded in the JavaScript bundle. Do not put tokens, passwords, or other secrets in it. The API must allow requests from the frontend origin when using a different origin.
+`VITE_API_URL` is a public frontend setting and is embedded in the JavaScript bundle. Do not put tokens, passwords, or other secrets in it. Keep the default `/api` value when running the UI container so Nginx proxies requests to the API and avoids browser CORS errors. The proxy also handles localhost preflight requests.
 
 ## Build and run locally
 
@@ -28,7 +28,7 @@ docker build --no-cache -t payroll-ui:latest .
 docker run --rm --add-host=host.docker.internal:host-gateway -p 8080:8080 payroll-ui:latest
 ```
 
-Open `http://localhost:8080`. The Nginx health endpoint is `http://localhost:8080/healthz`.
+The API must be running on the host at `http://localhost:3000`. Open `http://localhost:8080`; API calls use `http://localhost:8080/api` and are proxied to port 3000 without a cross-origin browser request. The Nginx health endpoint is `http://localhost:8080/healthz`.
 
 ## Kubernetes manifests
 
