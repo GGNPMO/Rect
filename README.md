@@ -7,7 +7,7 @@ Vite + React frontend for the employee payroll system. The production container 
 The frontend uses `http://localhost:3000/api` by default. The Rect application runs on port `8080`, while the API runs on port `3000`:
 
 ```powershell
-docker build -t payroll-ui:latest .
+docker build --no-cache --build-arg VITE_API_URL=http://localhost:3000/api -t payroll-ui:latest .
 ```
 
 `VITE_API_URL` is a public frontend setting and is embedded in the JavaScript bundle. Do not put tokens, passwords, or other secrets in it. The API must allow requests from the frontend origin when using a different origin.
@@ -24,7 +24,7 @@ Open `http://localhost:8080` when running the frontend locally.
 Build and serve the production image locally:
 
 ```powershell
-docker build -t payroll-ui:latest .
+docker build --no-cache --build-arg VITE_API_URL=http://localhost:3000/api -t payroll-ui:latest .
 docker run --rm -p 8080:8080 payroll-ui:latest
 ```
 
