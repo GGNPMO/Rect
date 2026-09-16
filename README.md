@@ -12,6 +12,16 @@ docker build --no-cache -t payroll-ui:latest .
 
 `VITE_API_URL` is a public frontend setting and is embedded in the JavaScript bundle. Do not put tokens, passwords, or other secrets in it. Keep the default `/api` value when running the UI container so Nginx proxies requests to the API and avoids browser CORS errors. The proxy also handles localhost preflight requests.
 
+### CORS fix for login
+
+Use the UI proxy URL from browser code:
+
+```text
+http://localhost:8080/api/auth/login
+```
+
+Nginx forwards that request to the Web API at `http://localhost:3000/api/auth/login` and handles `OPTIONS` preflight requests. It permits localhost and `127.0.0.1` origins, including development ports, and allows the `Authorization`, `Content-Type`, `Accept`, `Origin`, and `X-Requested-With` headers. Do not call the API directly from browser code at port `3000` unless the Web API itself also enables CORS for the frontend origin.
+
 ## Build and run locally
 
 ```powershell
